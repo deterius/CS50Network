@@ -1,0 +1,52 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+
+<div class="container pt-5">
+    
+   
+    <h1>{{check_user.username}}</h1>
+    <p>User since: {{check_user.date_joined}}</p>
+    <div class="row gy-1 pt-3">
+        <h3>Following</h1>
+        {% if followings %}
+            {% for following, date in followings %}
+                <ol class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                        <a href="{% url 'user_page' following.username %}">{{following.username}}</a>
+                        <span class="badge bg-primary rounded-pill">{{date}}</span>
+                    </li>
+                </ol>
+            {% endfor %}
+        {% else %}
+            <ol class="list-group">
+                <li class="list-group-item d-flex justify-content-between align-items-start">
+                    None
+                </li>
+            </ol>
+        {% endif %}
+    </div>
+   
+   <div class="row gy-1 pt-3">
+    <h3>Followers</h3>
+    {% if followers %}
+        {% for follow, date in followers %}
+        <ol class="list-group">
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <a href="{% url 'user_page' follow.user %}">{{follow.user}}</a>
+                <span class="badge bg-primary rounded-pill">{{date}}</span>
+            </li>
+        </ol>
+        {% endfor %}
+    {% else %}
+        <ol class="list-group">
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                None
+            </li>
+        </ol>
+    {% endif %}
+       
+    </div>
+</div>
+
+{% endblock %}

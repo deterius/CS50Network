@@ -1,0 +1,260 @@
+{% extends "network/sub-layout.html" %}
+
+{% block center_column_content %}
+    <!-- Center Column -->
+    <div class="col-md-9 ">
+        <!-- new post -->
+        {% if user.is_authenticated %}
+                <ul class="nav nav-tabs mt-3" id="new_post_tab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                    <button id="new_posts_button" class="nav-link active" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Create New Post</button>
+                    </li>
+                </ul>
+        <div id="new_post_div" class="container">
+            <form action="{% url 'new_post' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for field in new_post_form %}
+                    <div class="form-group">
+                        {{ field.errors }}
+                        {{ field }}
+                    </div>
+                {% endfor %}
+                <input type="submit" class="btn custom-button-newpost" value="POST">
+            </form>
+        </div>
+        {% endif %}
+        <!-- Posts Filter -->
+        {% if user.is_authenticated %}
+
+        <ul class="nav nav-tabs mt-3 tab-list" id="myTab">
+            <li class="nav-item tab-link" onclick="openTab('all_posts')">All Posts</li>
+            <li class="nav-item tab-link" onclick="openTab('following_posts')">Following Posts</li>
+            <li class="nav-item tab-link" onclick="openTab('user_posts')">Filtered Posts</li>
+        </ul>
+
+        {% else %}
+        <ul class="nav nav-tabs mt-3 tab-list" id="myTab">
+            <li class="nav-item tab-link" onclick="openTab('all_posts')">All Posts</li>
+        </ul>
+        {% endif %}
+        
+
+       
+
+        
+
+        {% if user.is_authenticated %}
+            <!-- All Posts Div -->
+            <div id="all_posts" class="tab-content">
+                {% for post in page %}
+                <div class="card my-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-auto">
+                                <div class="card-title"><a href="{% url 'user_page' post.created_by %}">{{post.created_by}}</a></div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="text-muted small mb-3">{{post.created}}</div>
+                            </div>
+                        </div>
+
+                    
+                        {% if request.user.id != post.created_by_id and user.is_authenticated %}
+                            <div class="follow-form">
+                                <form id="follow-form" class="" action="{% url 'follow_user' post.created_by %}" method="POST">
+                                    {% csrf_token %}
+                                    {% if post.following_user %}                                
+                                        <input type="submit" class="follow_status_button custom-button-unfollow" value="Unfollow" data-username="{{post.created_by}}">
+                                    {% else %}
+                                        <input type="submit" class="follow_status_button custom-button-follow" value="Follow" data-username="{{post.created_by}}">
+                                    {% endif %}
+                                </form>
+                            </div>
+                        {% endif %}
+
+                        <div class="card-text">{{post.content}}</div>
+                        <div class="row">
+                            <div class="col like-col">
+                                {% if user.is_authenticated %}
+                                    <form id="like-form-{{ post.id }}" class="like-form" data-post-id="{{ post.id }}" action="{% url 'like_post' post.id %}" method="POST">
+                                        {% csrf_token %}
+                                        {% if post.is_liked %}
+                                            <input id="all_posts-like-button-{{ post.id }}" type="submit" class="like-button" value='♥'>
+                                        {% else %}
+                                            <input id="all_posts-like-button-{{ post.id }}" type="submit" class="like-button" value='♡'>
+                                        {% endif %}
+                                    </form>
+                                {% else %}
+                                    {% if post.is_liked %}
+                                        <input id="all_posts-like-button-{{ post.id }}" type="submit" class="like-button" value='♥' disabled>
+                                    {% else %}
+                                        <input id="all_posts-like-button-{{ post.id }}" type="submit" class="like-button" value='♡' disabled>
+                                    {% endif %}
+
+                                {% endif %}
+                            </div>
+                            <div class="col like-col">
+                                <div id="all_posts-like-count-{{ post.id }}" class=""> {{post.likes}}</div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="pagination">
+                    <span class="step-links">
+                        {% if page.has_previous %}
+                            <a href="?page=1">&laquo; first</a>
+                            <a href="?page={{ page.previous_page_number }}">previous</a>
+                        {% endif %}
+                
+                        <span class="current">
+                            Page {{ page.number }} of {{ page.paginator.num_pages }}.
+                        </span>
+                
+                        {% if page.has_next %}
+                            <a href="?page={{ page.next_page_number }}">next</a>
+                            <a href="?page={{ page.paginator.num_pages }}">last &raquo;</a>
+                        {% endif %}
+                    </span>
+                </div>
+                
+                <!-- END ALL Posts Div -->
+            </div>
+            <!-- User Excluded Posts Div -->
+            <div id="user_posts" class="tab-content" >
+                    {% if user.is_authenticated %}
+                        {% for post in page_user %}
+                            {% if request.user.id != post.created_by_id and user.is_authenticated %}
+                                <div class="card my-3">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-auto">
+                                                <div class="card-title"><a href="{% url 'user_page' post.created_by %}">{{post.created_by}}</a></div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <div class="text-muted small mb-3">{{post.created}}</div>
+                                            </div>
+                                        </div>
+
+                                    
+                                        {% if request.user.id != post.created_by_id and user.is_authenticated %}
+                                            <div class="follow-form">
+                                                <form id="follow-form" class="" action="{% url 'follow_user' post.created_by %}" method="POST">
+                                                    {% csrf_token %}
+                                                    {% if post.following_user %}                                
+                                                        <input type="submit" class="follow_status_button custom-button-unfollow" value="Unfollow" data-username="{{post.created_by}}">
+                                                    {% else %}
+                                                        <input type="submit" class="follow_status_button custom-button-follow" value="Follow" data-username="{{post.created_by}}">
+                                                    {% endif %}
+                                                </form>
+                                            </div>
+                                        {% endif %}
+
+                                        <div class="card-text">{{post.content}}</div>
+                                        <div class="row">
+                                            <div class="col like-col">
+                                                {% if user.is_authenticated %}
+                                                    <form id="like-form-{{ post.id }}" class="like-form" data-post-id="{{ post.id }}" action="{% url 'like_post' post.id %}" method="POST">
+                                                        {% csrf_token %}
+                                                        {% if post.is_liked %}
+                                                            <input id="user_posts-like-button-{{ post.id }}" type="submit" class="like-button" value='♥'>
+                                                        {% else %}
+                                                            <input id="user_posts-like-button-{{ post.id }}" type="submit" class="like-button" value='♡'>
+                                                        {% endif %}
+                                                    </form>
+                                                {% else %}
+                                                    {% if post.is_liked %}
+                                                        <input id="user_posts-like-button-{{ post.id }}" type="submit" class="like-button" value='♥' disabled>
+                                                    {% else %}
+                                                        <input id="user_posts-like-button-{{ post.id }}" type="submit" class="like-button" value='♡' disabled>
+                                                    {% endif %}
+
+                                                {% endif %}
+                                            </div>
+                                            <div class="col like-col">
+                                                <div id="user_posts-like-count-{{ post.id }}" class=""> {{post.likes}}</div>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}             
+        {% endif %}
+                    <div class="pagination">
+                        <span class="step-links">
+                            {% if page_user.has_previous %}
+                                <a href="?page=1">&laquo; first</a>
+                                <a href="?page={{ page_user.previous_page_number }}">previous</a>
+                            {% endif %}
+                    
+                            <span class="current">
+                                Page {{ page_user.number }} of {{ page_user.paginator.num_pages }}.
+                            </span>
+                    
+                            {% if page_user.has_next %}
+                                <a href="?page={{ page_user.next_page_number }}">next</a>
+                                <a href="?page={{ page_user.paginator.num_pages }}">last &raquo;</a>
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+            <!-- END User Posts -->
+            </div>
+            <!-- Folling Posts -->
+            <div id="following_posts" class="tab-content">
+                {% for post in following_data %}
+                <div class="card my-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-auto">
+                                <div class="card-title"><a href="{% url 'user_page' post.created_by %}">{{post.created_by}}</a></div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="text-muted small mb-3">{{post.created}}</div>
+                            </div>
+                        </div>
+                        {% if request.user.id != post.created_by_id %}
+                            <div class="follow-form">
+                                <form id="follow-form" class="" action="{% url 'follow_user' post.created_by %}" method="POST">
+                                    {% csrf_token %}
+                                    {% if post.following_user %}
+                                    <p>Not following user</p>                                
+                                        <input type="submit" class="follow_status_button custom-button-unfollow" value="Unfollow" data-username="{{post.created_by}}">
+                                    {% else %}
+                                        <input type="submit" class="follow_status_button custom-button-follow" value="Follow" data-username="{{post.created_by}}">
+                                    {% endif %}
+                                </form>
+                            </div>
+                        {% endif %}
+
+                        <div class="card-text">{{post.content}}</div>
+                        <div class="row">
+                            <div class="col like-col">
+                                    <form id="like-form-{{ post.id }}" class="like-form" data-post-id="{{ post.id }}" action="{% url 'like_post' post.id %}" method="POST">
+                                        {% csrf_token %}
+                                        {% if post.is_liked %}
+                                            <input id="all_posts-like-button-{{ post.id }}" type="submit" class="like-button" value='♥'>
+                                        {% else %}
+                                            <input id="all_posts-like-button-{{ post.id }}" type="submit" class="like-button" value='♡'>
+                                        {% endif %}
+                                    </form>
+                               
+                            </div>
+                            <div class="col like-col">
+                                <div id="all_posts-like-count-{{ post.id }}" class=""> {{post.likes}}</div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+       
+
+    </div>
+{% endblock %}
+
+ 

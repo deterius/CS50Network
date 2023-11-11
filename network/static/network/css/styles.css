@@ -1,0 +1,384 @@
+/* FONT For all headers */
+@font-face {
+    font-family: 'Barlow Condensed';
+    src: url('../fonts/Barlow_Condensed/BarlowCondensed-Bold.ttf') format('truetype');
+    /* Repeat similar blocks for other font weights or styles if necessary */
+}
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../fonts/Montserrat/Montserrat-VariableFont_wght.ttf') format('truetype');
+    /* Repeat similar blocks for other font weights or styles if necessary */
+}
+
+/* Set Fonts */
+h1, h2, h3, h4, button {
+    font-family: 'Barlow Condensed', sans-serif !important; 
+}
+
+a, p, body {
+    font-family: 'Montserrat', sans-serif !important;
+}
+
+html body {
+    font-family: 'Montserrat', sans-serif !important;
+}
+.btn, .navbar, .card-title, .nav-item, .nav-link {
+    font-family: 'Barlow Condensed', sans-serif !important; 
+}
+
+/* General */
+p {
+    font-size: calc(1rem + 0.5vw);
+}
+
+a {
+    color: #ff533d
+}
+a:hover {
+    text-decoration: none;
+    color: #0f1626;
+}
+
+
+
+h3 {
+    font-size: calc(1.2rem + 0.5vw); /* Base of 1.2rem (~19.2px) with scaling */
+}
+
+@media (max-width: 400px) {
+    h3 {
+        font-size: 18px; /* Set a minimum size to ensure readability on very small screens */
+    }
+}
+
+@media (min-width: 1400px) {
+    h3 {
+        font-size: 26px; /* Set a maximum size to avoid overly large headings on wide screens */
+    }
+}
+
+
+/* Top nav bar */
+@media (max-width: 992px) {  /* Adjust the breakpoint if necessary */
+    #navbarNavAltMarkup {
+        text-align: center;
+    }
+
+    #navbarNavAltMarkup .navbar-nav {
+        display: inline-block;
+    }
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke='rgba(0, 0, 0, 0.55)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='M4 7h22M4 15h22M4 23h22'%3e%3c/path%3e%3c/svg%3e");
+    
+}
+
+#navbar-button {
+    border:#ab987a 3px solid;
+    border-radius: 5px;
+    padding: 1vh;
+}
+
+
+#header-logo {
+    height: 8vh;
+}
+
+#top-navbar {
+    height: 100px;
+    background-color: #fff;
+    border-bottom: 20px solid #f5f5f5;
+    box-shadow: 0 5px 0 0 #0f1626;
+}
+/* Small screens and below */
+@media (max-width: 767.98px) { /* This breakpoint is for Bootstrap 4. Adjust if you are using a different version. */
+    #top-navbar {
+        height: auto;
+    }
+}
+
+.nav-link {
+    color:#ab987a;
+    text-transform: uppercase;
+}
+.nav-link:hover {
+    color: #0f1626;
+}
+
+#nav-link-user {
+    color:#ff533d;
+}
+
+/* Left Body Column */
+
+/* Small screens and below */
+@media (max-width: 767.98px) { /* This breakpoint is for Bootstrap 4. Adjust if you are using a different version. */
+    #left-col {
+        display: flex;
+        flex-direction: row !important; /* Override any other flex direction settings */
+    }
+    .left-col-top .content {
+        position: relative !important;   /* Positioned relative to the square-div */
+        display: flex;
+        align-items: center;      /* vertical centering */
+        justify-content: center;  /* horizontal centering */
+    }
+
+    .left-col-top {
+        width: 100%;
+        position: relative;
+        background-color: #f5f5f5;
+        border-bottom: 5px solid #fff;
+        display: flex;
+        flex-direction: column; /* Stacks children vertically */
+        justify-content: center; /* Centers children vertically */
+        height: 100%; 
+        padding: 10px;
+
+    }
+    .body, h3, p {
+        font-size: 85%;
+    }
+}
+/* Medium screens and up */
+@media (min-width: 768px) {  /* Bootstrap 4's breakpoint for medium devices */
+    .left-col-top {
+        width: 100%;
+        padding-top: 100%;   /* Makes the height equal to its width */
+        margin-top: 2vh;
+    }
+}
+.left-col-top {
+    width: 100%;
+    position: relative;
+    background-color: #f5f5f5;
+    border-bottom: 5px solid #fff;
+}
+
+.left-col-top h3 {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    white-space: normal;
+}
+
+.left-col-top .content {
+    position: absolute;   /* Positioned relative to the square-div */
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    align-items: center;      /* vertical centering */
+    justify-content: center;  /* horizontal centering */
+}
+
+.left-col-top .content .p-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.left-col-top .content .p-wrapper p:first-child {
+    margin-bottom: 0;
+    text-transform: uppercase;
+}
+
+.left-col-top .content .p-wrapper p:second-child {
+    margin-bottom: 0;
+    text-transform: uppercase;
+}
+.text-emphasis {
+    color:#ab987a;
+}
+
+.wrap-text {
+    word-wrap: break-word;
+}
+
+/* Center Body Column */
+.custom-button-newpost {
+    display: inline-block;
+    background-color: #ff533d; /* Assuming you want no fill, change if otherwise */
+    border-radius: 5px; /* Small rounded corners */
+    border: none;
+    color: #fff; /* Text color */
+    cursor: pointer;
+    font-size: 12px; /* Adjust as needed */
+    text-decoration: none; /* Useful if this is an anchor tag styled as a button */
+    transition: 0.3s; /* Optional: smoothens the hover effect */
+
+    box-shadow: 
+        0 0 0 2px #ff533d, 
+        0 0 0 4px white, 
+        0 0 0 6px #ff533d;
+}
+.custom-button-newpost:hover {
+    background-color: #fff;
+    box-shadow: 
+        0 0 0 2px #ff533d, 
+        0 0 0 4px white, 
+        0 0 0 6px #ff533d;
+}
+
+
+.new-post-text-field {
+    width: 100%; /* Take full width of the parent container */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    margin-top: 2vh;
+    max-height: 10vh;
+   
+}
+
+
+#new_posts_button {
+    border-color: #ff533d #ff533d #fff;
+    font-weight: bold;
+}
+#new_posts_button:hover {
+    border-color: #ff533d #ff533d #fff;
+    font-weight: bold;
+    color:#ff533d;
+}
+
+#new_post_tab {
+    border-bottom: 1px #ff533d solid;
+}
+
+#new_post_div {
+    border-bottom-left-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+    border-bottom: 1px #ff533d solid;
+    border-left: 1px #ff533d solid;
+    border-right: 1px #ff533d solid;
+
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    display: none;  /* keep it initially hidden */
+    visibility: hidden;  /* ensures it won't interfere with interactions */
+}
+
+/* Others */
+
+#new_post_button {
+    position: fixed;
+    bottom: 20pt;
+    right: 20pt;
+
+}
+
+
+#liked_posts {
+    display:none;
+}
+.like-button {
+    background: none;
+    border: none;
+}
+.like-col{
+    max-width: 3%;
+}
+
+
+.like-button {
+    background: none;
+    border: none;
+    
+}
+.like-col{
+    max-width: 3%;
+}
+a {
+    text-decoration: none;
+}
+
+
+.custom-button-unfollow {
+    display: inline-block;
+    background-color: #ab987a; /* Assuming you want no fill, change if otherwise */
+    border-radius: 5px; /* Small rounded corners */
+    border: none;
+    color: #fff; /* Text color */
+    cursor: pointer;
+    font-size: 12px; /* Adjust as needed */
+    text-decoration: none; /* Useful if this is an anchor tag styled as a button */
+    transition: 0.3s; /* Optional: smoothens the hover effect */
+
+    box-shadow: 
+        0 0 0 2px #ab987a, 
+        0 0 0 4px white, 
+        0 0 0 6px #ab987a;
+}
+.custom-button-unfollow:hover {
+    background-color: #ff533d;
+    box-shadow: 
+        0 0 0 2px #ff533d, 
+        0 0 0 4px white, 
+        0 0 0 6px #ff533d;
+}
+
+.custom-button-follow {
+    display: inline-block;
+    background-color: #fff; /* Assuming you want no fill, change if otherwise */
+    border-radius: 5px; /* Small rounded corners */
+    border: none;
+    color: #ab987a; /* Text color */
+    cursor: pointer;
+    font-size: 12px; /* Adjust as needed */
+    text-decoration: none; /* Useful if this is an anchor tag styled as a button */
+    transition: 0.3s; /* Optional: smoothens the hover effect */
+
+    box-shadow: 
+        0 0 0 2px #ab987a, 
+        0 0 0 4px white, 
+        0 0 0 6px #ab987a;
+}
+
+.custom-button-follow:hover {
+    background-color: #ff533d;
+    color: #fff;
+    box-shadow: 
+        0 0 0 2px #ff533d, 
+        0 0 0 4px white, 
+        0 0 0 6px #ff533d;
+}
+
+.button-30:focus {
+box-shadow: #D6D6E7 0 0 0 1.5px inset, rgba(45, 35, 66, 0.4) 0 2px 4px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
+}
+
+.button-30:hover {
+box-shadow: rgba(45, 35, 66, 0.4) 0 4px 8px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
+transform: translateY(-2px);
+}
+
+.button-30:active {
+box-shadow: #D6D6E7 0 3px 7px inset;
+transform: translateY(2px);
+}
+
+/* TAB */
+.tab-content {
+    display: none;
+}   
+
+.tab-content.active {
+    display: block;
+}
+
+.tab-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.tab-list li {
+    display: inline;
+    margin-right: 10px;
+    cursor: pointer;
+}
+.tab-list .active {
+    color:red;
+}

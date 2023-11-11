@@ -1,0 +1,75 @@
+{% extends "network/layout.html" %}
+{% load static %}
+{% block body %}
+
+
+
+{% if user.is_authenticated %}    
+    <!-- The new posts -->
+    <div id="posts" class="">
+        <div id="postContainer"></div>
+    </div>
+{% endif %}
+
+
+<div class="container">
+    <div class="row mx-auto mt-3">
+        <!-- Left Column -->
+        {% if user.is_authenticated %}
+            <div id="left-col" class="col-12 col-md-3 wrap-text text-center">          
+                <div class="left-col-top col-4 col-md-12">
+                    <div class="content">
+                        <div class="p-wrapper">
+                            <a href="{% url 'user_page' user.username %}"><h3>{{user.username}}</h3></a>
+                            <p class="small" style="margin-bottom: 0; text-transform: uppercase;">date joined:</p>
+                            <p class="text-emphasis strong">{{ user.date_joined|date:"Y-m-d" }}</p>
+                        </div> 
+                    </div>   
+                </div>
+                
+                <div class="left-col-top col-4 col-md-12">
+                    <div class="content">
+                        <div class="p-wrapper">
+                            <p class="small">Following:</p>
+                            <a href="{% url 'stats' user.username %}"><p class="text-emphasis strong">{{following_count}}</p></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="left-col-top col-4 col-md-12">
+                    <div class="content">
+                        <div class="p-wrapper">
+                            <p class="small">Followers:</p>
+                            <a href="{% url 'stats' user.username %}"><p class="text-emphasis strong">{{followers_count}}</p></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+           
+        <div class="col-3 post-side-columns my-3 wrap-text text-center">
+            <div class="left-col-top col-4 col-md-12">
+                <div class="content">
+                    <div class="p-wrapper gy-3">
+                        <p class="small">Not logged in</p>
+                        <a href="{% url 'login' %}"><p class="text-emphasis strong">Login</p></a>
+                        <a href="{% url 'register' %}"><p class="text-emphasis strong">Register</p></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% endif %}
+        <!-- Center Column -->
+        <div class="col-md-9 ">
+            {% block center_column_content %}
+           
+            {% endblock %}
+        </div>
+        
+    </div>
+</div>
+
+
+
+
+{% endblock %}

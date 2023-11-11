@@ -1,0 +1,175 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="{% static 'network/js/script.js' %}"></script>
+
+    <div class="container">
+        <div class="row mx-auto mt-3">
+            <!-- Left Column -->
+            <div id="left-col" class="col-12 col-md-3 wrap-text text-center">
+                <div class="left-col-top col-4 col-md-12">
+                    <div class="content">
+                        <div class="p-wrapper">
+                            <a href="{% url 'user_page' user_obj.username %}"><h3>{{user_obj.username}}</h3></a>
+                            <p class="small" style="margin-bottom: 0; text-transform: uppercase;">date joined:</p>
+                            <p class="text-emphasis strong">{{ user_obj.date_joined|date:"Y-m-d" }}</p>
+                            
+                        </div> 
+                    </div>   
+                </div>
+                
+                <div class="left-col-top col-4 col-md-12">
+                    <div class="content">
+                        <div class="p-wrapper">
+                            <p class="small">Following:</p>
+                            <a href="{% url 'stats' user_obj.username %}"><p class="text-emphasis strong">{{following_count}}</p></a>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="left-col-top col-4 col-md-12">
+                    <div class="content">
+                        <div class="p-wrapper">
+                            <p class="small">Followers:</p>
+                            <a href="{% url 'stats' user_obj.username %}"><p id="follower-count" class="text-emphasis strong">{{follower_count}}</p></a>
+                            {% if request.user.id != user_obj.id and user.is_authenticated %}
+                            <div class="follow-form">
+                                <form id="follow-form" class="" action="{% url 'follow_user' user_obj.username %}" method="POST">
+                                    {% csrf_token %}
+                                    {% if follow_status %}                               
+                                        <input type="submit" class="follow_status_button custom-button-unfollow my-1" value="Unfollow" data-username="{{user_obj.username}}">
+                                    {% else %}
+                                        <input type="submit" class="follow_status_button custom-button-follow my-1" value="Follow" data-username="{{user_obj.username}}">
+                                    {% endif %}
+                                </form>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+              
+            
+            </div>
+            <!-- Center Column -->
+            
+            <div class="col-md-9" >
+                {% if user.is_authenticated %}
+                    <ul class="nav nav-tabs mt-3" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="posts_link" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true" href="#">Posts</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="liked_link" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false" href="#">Likes</button>
+                        </li>
+                    </ul>
+                {% endif %}
+            <div id="user_posts">
+                {% for post in posts %}
+                    <div class="card my-3">
+                        <div class="card-body">
+                            <div class="card-subtitle mb-2 text-muted">{{post.created}}</div>
+                            <div class="card-text">{{post.content}}</div>
+                            <div class="row">
+                                <div class="col like-col">
+                                 
+
+                                    {% if user_obj %}
+                                    <form id="like-form-{{ post.id }}" class="like-form" data-post-id="{{ post.id }}" action="{% url 'like_post' post.id %}" method="POST">
+                                        {% csrf_token %}
+                                        {% if post.user_likes %}
+                                            <input id="all_posts-like-button-{{ post.id }}" type="submit" class="like-button" value='♥'>
+                                        {% else %}
+                                            <input id="all_posts-like-button-{{ post.id }}" type="submit" class="like-button" value='♡'>
+                                        {% endif %}
+                                    </form>
+                                    {% else %}
+                                        {% if post.user_likes %}
+                                            <input id="all_posts-like-button-{{ post.id }}" type="submit" class="like-button" value='♥' disabled>
+                                        {% else %}
+                                            <input id="all_posts-like-button-{{ post.id }}" type="submit" class="like-button" value='♡' disabled>
+                                        {% endif %}
+
+                                    {% endif %}
+
+
+                                </div>
+                                <div class="col like-col">
+                                    <div id="all_posts-like-count-{{ post.id }}" class="">{{post.like_count}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                {% endfor %}
+            </div>
+
+            <div id="liked_posts">
+                {% for post in liked_posts %}
+                <div class="card my-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-auto">
+                                <div class="card-title"><a href="{% url 'user_page' post.created_by %}">{{post.created_by}}</a></div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="text-muted small mb-3">{{post.created}}</div>
+                            </div>
+                        </div>
+
+                    
+                        {% if request.user.id != post.created_by_id and user.is_authenticated %}
+                            <div class="follow-form">
+                                <form id="follow-form" class="" action="{% url 'follow_user' post.created_by %}" method="POST">
+                                    {% csrf_token %}
+                                    {% if post.following_user %}                                
+                                        <input type="submit" class="follow_status_button custom-button-unfollow" value="Unfollow" data-username="{{post.created_by}}">
+                                    {% else %}
+                                        <input type="submit" class="follow_status_button custom-button-follow" value="Follow" data-username="{{post.created_by}}">
+                                    {% endif %}
+                                </form>
+                            </div>
+                        {% endif %}
+
+                        <div class="card-text">{{post.content}}</div>
+                        
+                        
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        </div>
+        
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // USER inner navigation
+            const userPosts = document.querySelector('#user_posts');
+            const likedPosts = document.querySelector('#liked_posts');
+            const postsLink = document.querySelector('#posts_link')
+            const likedLink = document.querySelector('#liked_link')
+
+            postsLink.addEventListener('click', function() {
+                userPosts.style.display = 'block';
+                likedPosts.style.display = 'none';
+            })
+
+            likedLink.addEventListener('click', function() {
+                userPosts.style.display = 'none';
+                likedPosts.style.display = 'block';
+            })
+
+
+        
+            
+        });
+    </script>
+    
+    
+    
+{% endblock %}
+
+

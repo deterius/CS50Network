@@ -1,0 +1,199 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+
+
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="flex-wrap">
+                <h1 style="max-width: 100%; word-wrap: break-word;">{{user_obj.username}}</h1>
+            </div>
+
+            {% if request.user.id != user_obj.id and user.is_authenticated %}
+            <div class="follow-form">
+                <form id="follow-form" class="" action="{% url 'follow_user' user_obj.username %}" method="POST">
+                    {% csrf_token %}
+                    {% if follow_status %}
+                        <input type="submit" class="follow_status_button btn btn-danger" value="Unfollow">
+                    {% else %}
+                        <input type="submit" class="follow_status_button btn btn-primary" value="Follow">
+                    {% endif %}
+                </form>
+            </div>
+            {% endif %}
+
+            
+            
+            <p class="text-truncate"> {{user_obj.email}}</p>
+            <p>Date Joined: {{user_obj.date_joined}}</p>
+            <div class="row border-bottom border-secondary">
+                <div class="col-lg-6 text-center ">Following:</div>
+                <div class="col-lg-6 text-center ">{{following_count}}</div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 text-center">Followers:</div>
+                <div class="col-lg-6 text-center">{{follower_count}}</div>
+            </div>
+        
+        </div>
+        <div class="col-lg-8">
+            <ul class="nav">
+                <li class="nav-item">
+                  <a id="posts_link" class="nav-link active" aria-current="page" href="#">Posts</a>
+                </li>
+                <li class="nav-item">
+                  <a id="liked_link" class="nav-link" href="#">Likes</a>
+                </li>
+              </ul>
+            <div id="user_posts">
+                {% for post in posts %}
+                    <div class="card my-3">
+                        <div class="card-body">
+                            <div class="card-subtitle mb-2 text-muted">{{post.created}}</div>
+                            <div class="card-text">{{post.content}}</div>
+                            <div class="row">
+                                <div class="col like-col">
+                                    {% if user_obj %}
+                                    <form id="like-form-{{ post.id }}" class="like-form" data-post-id="{{ post.id }}" action="{% url 'like_post' post.id %}" method="POST">
+                                        {% csrf_token %}
+                                        {% if post.user_likes %}
+                                        <input id="like-button-{{ post.id }}" type="submit" class="like-button" value='♥'>
+                                        {% else %}
+                                        <input id="like-button-{{ post.id }}" type="submit" class="like-button" value='♡'>
+                                        {% endif %}
+                                        
+                                    </form>
+                                    {% endif %}
+                                </div>
+                                <div class="col like-col">
+                                    <div id="like-count-{{ post.id }}" class="">{{post.like_count}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                {% endfor %}
+            </div>
+
+            <div id="liked_posts">
+                <h1>liked posts</h1>
+            </div>
+        </div>
+        
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // inner navigation
+            const userPosts = document.querySelector('#user_posts');
+            const likedPosts = document.querySelector('#liked_posts');
+            const postsLink = document.querySelector('#posts_link')
+            const likedLink = document.querySelector('#liked_link')
+
+            postsLink.addEventListener('click', function() {
+                userPosts.style.display = 'block';
+                likedPosts.style.display = 'none';
+            })
+
+            likedLink.addEventListener('click', function() {
+                userPosts.style.display = 'none';
+                likedPosts.style.display = 'block';
+            })
+
+
+            // FOLLOW/UNFOLLOW USER
+            const followForm = document.querySelector('#follow-form');
+            followForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                var url = followForm.action;
+
+                // create XMLHTTP request object
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', url, true);
+                xhr.setRequestHeader('X-CSRFToken', followForm.elements['csrfmiddlewaretoken'].value);
+                
+                xhr.onreadystatechange = function() {
+                    
+                    if (xhr.readyState == XMLHttpRequest.DONE) {
+                        if (xhr.status === 200) {
+                            // success: update follow status
+                            var response = JSON.parse(xhr.responseText);
+                            var followStatus = response.following;
+                            var followStatusButton = document.getElementsByClassName('follow_status_button');
+
+                           
+                            if (followStatus === true) {
+                                followStatusButton[0].value = 'Unfollow'
+                                followStatusButton[0].classList.remove('btn-primary');
+                                followStatusButton[0].classList.add('btn-danger');
+                            } else {
+                                followStatusButton[0].value = 'Follow';
+                                followStatusButton[0].classList.remove('btn-danger');
+                                followStatusButton[0].classList.add('btn-primary');
+                            }
+
+                            console.log(followStatus)
+                        }
+                    }
+                }
+
+                xhr.send(new FormData(followForm))
+            })
+
+            // LIKE POST FUNCTION
+            document.querySelectorAll('.like-form').forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    event.preventDefault(); // Prevent the default form submission
+            
+                    var url = form.action;
+            
+                    // Create a new XMLHttpRequest object
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', url, true);
+                    xhr.setRequestHeader('X-CSRFToken', form.elements['csrfmiddlewaretoken'].value);
+            
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState === XMLHttpRequest.DONE) {
+                            if (xhr.status === 200) {
+                                // Success: Update the like count
+                                var response = JSON.parse(xhr.responseText);
+                                var likeCount = response.likes;
+                                var postId = form.getAttribute('data-post-id');
+                                var likeCountElement = document.getElementById('like-count-' + postId);
+                                //likeCountElement.innerHTML = '&#x2665; ' + likeCount; original code
+                                likeCountElement.innerHTML =  likeCount;
+
+            
+                                // change like button
+                                var likeButton = document.getElementById('like-button-'+ postId);
+                                if (likeButton.value == '♡') {
+                                    likeButton.value = '♥'; // Outline heart
+                                } else {
+                                    likeButton.value = '♡'; // Filled heart
+                                }
+                                
+            
+                                // change update 
+                            } else {
+                                // Error: Display an error message
+                                console.error('Error:', xhr.status, xhr.statusText);
+                            }
+                        }
+                    };
+            
+                    // Send the form data
+                    xhr.send(new FormData(form));
+                });
+            });
+
+          });
+        
+    </script>
+    
+    
+    
+{% endblock %}
+
+
